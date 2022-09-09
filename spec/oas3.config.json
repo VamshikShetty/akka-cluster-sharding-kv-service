@@ -1,0 +1,10 @@
+{
+   "groupId": "com.akka.kv",
+   "artifactId": "akka-sharding-kv-example",
+   "artifactVersion": "1.0.0",
+   "library": "spring-boot",
+   "invokerPackage": "com.example.akka.sharding.kv.spring",
+   "modelPackage": "com.example.akka.sharding.kv.spring.model",
+   "apiPackage": "com.example.akka.sharding.kv.spring.api",
+   "hideGenerationTimestamp": true
+}

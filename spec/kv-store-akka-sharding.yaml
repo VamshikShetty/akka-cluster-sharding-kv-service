@@ -1,0 +1,80 @@
+openapi: 3.0.3
+info:
+  title: In memory KV akka store - OpenAPI 3.0
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+tags:
+  - name: kv-store
+    description: Operations related to fetching and storing KV pairs.
+paths:
+  /db/kv/put:
+    post:
+      tags:
+        - kv-store
+      summary: Store key-value
+      description: Add new key-value pair into DB
+      operationId: addKeyValue
+      requestBody:
+        $ref: '#/components/requestBodies/storeKv'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseStored'
+  /db/kv/get:
+    get:
+      tags:
+        - kv-store
+      summary: Fetch stored value
+      description: Get stored value via key from DB
+      operationId: fetchValue
+      parameters:
+        - in: query
+          name: key
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/storedValue'
+components:
+  schemas:
+    storeKv:
+      required:
+        - key
+        - value
+      type: object
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+    responseStored:
+      required:
+        - stored
+      type: object
+      properties:
+        stored:
+          type: boolean
+    storedValue:
+      required:
+        - value
+      type: object
+      properties:
+        value:
+          type: string
+  requestBodies:
+    storeKv:
+      description: put key-value in data store.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/storeKv'

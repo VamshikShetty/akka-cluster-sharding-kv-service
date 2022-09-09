@@ -1,0 +1,95 @@
+openapi: 3.0.3
+info:
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: In memory KV akka store - OpenAPI 3.0
+  version: 1.0.0
+servers:
+- url: /
+tags:
+- description: Operations related to fetching and storing KV pairs.
+  name: kv-store
+paths:
+  /db/kv/put:
+    post:
+      description: Add new key-value pair into DB
+      operationId: addKeyValue
+      requestBody:
+        $ref: '#/components/requestBodies/storeKv'
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseStored'
+          description: Successful operation
+      summary: Store key-value
+      tags:
+      - kv-store
+      x-content-type: application/json
+      x-accepts: application/json
+      x-tags:
+      - tag: kv-store
+  /db/kv/get:
+    get:
+      description: Get stored value via key from DB
+      operationId: fetchValue
+      parameters:
+      - explode: true
+        in: query
+        name: key
+        required: true
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/storedValue'
+          description: Successful operation
+      summary: Fetch stored value
+      tags:
+      - kv-store
+      x-accepts: application/json
+      x-tags:
+      - tag: kv-store
+components:
+  requestBodies:
+    storeKv:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/storeKv'
+      description: put key-value in data store.
+  schemas:
+    storeKv:
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+      required:
+      - key
+      - value
+      type: object
+    responseStored:
+      example:
+        stored: true
+      properties:
+        stored:
+          type: boolean
+      required:
+      - stored
+      type: object
+    storedValue:
+      example:
+        value: value
+      properties:
+        value:
+          type: string
+      required:
+      - value
+      type: object
