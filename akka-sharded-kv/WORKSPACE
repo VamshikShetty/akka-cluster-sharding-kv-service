@@ -27,6 +27,7 @@ lombok_version = "1.18.22"
 
 # Akka versions.
 akka_version = "2.6.19"
+akka_management_version = "1.1.4"
 akka_versions_ScalaBinary = "2.13"
 
 # logging versions.
@@ -81,11 +82,21 @@ maven_install(
       "com.typesafe.akka:akka-actor_{}:{}".format(akka_versions_ScalaBinary, akka_version),
       "com.typesafe.akka:akka-actor-typed_{}:{}".format(akka_versions_ScalaBinary, akka_version),
 
+      # Akka management dependencies
+      "com.lightbend.akka.management:akka-management_{}:{}".format(akka_versions_ScalaBinary, akka_management_version),
+      "com.lightbend.akka.management:akka-management-cluster-bootstrap_{}:{}".format(akka_versions_ScalaBinary, akka_management_version),
+
+      # Akka discovery kubernetes-api dependencies
+      "com.lightbend.akka.discovery:akka-discovery-kubernetes-api_{}:{}".format(akka_versions_ScalaBinary, akka_management_version),
+
       # Akka cluster dependencies
       "com.typesafe.akka:akka-cluster-sharding_{}:{}".format(akka_versions_ScalaBinary, akka_version),
       "com.typesafe.akka:akka-cluster-sharding-typed_{}:{}".format(akka_versions_ScalaBinary, akka_version),
       "com.typesafe.akka:akka-cluster-typed_{}:{}".format(akka_versions_ScalaBinary, akka_version),
       "com.typesafe.akka:akka-cluster_{}:{}".format(akka_versions_ScalaBinary, akka_version),
+
+      # Akka discovery dependencies
+      "com.typesafe.akka:akka-discovery_{}:{}".format(akka_versions_ScalaBinary, akka_version),
 
       # Akka remoting dependencies
       "com.typesafe.akka:akka-remote_{}:{}".format(akka_versions_ScalaBinary, akka_version),

@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kv-akka-sharded-service-backend
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8089 # port: is the abstracted Service port, which can be any port other pods use to access the Service
+    protocol: TCP
+    targetPort: 8080 # targetPort: is the port the container accepts traffic on.
+  selector:
+    app.kv.akka: kv-akka-sharded

@@ -21,8 +21,80 @@ http://localhost:8080/swagger-ui.html
 Change default port value in application.properties
 
 
+eval $(minikube docker-env)
+
+docker build --tag kv-akka-sharded -f Dockerfile_kv-akka .
+docker build -f Dockerfile_cassandra --tag kv-db-cassandra .
+
+kubectl apply -f k8s/kv-akka-sharded-service.yaml 
+kubectl apply -f k8s/kv-akka-sharded-deployment.yaml 
+
+kubectl apply -f K8s/cassandra
+kubectl apply -f K8s/kv-akka-sharded
+
+kubectl delete service kv-akka-sharded-service-backend
+kubectl delete deploy kv-akka-sharded-deployment
+
+kubectl delete deploy cassandra-db-deployment
+
+docker run --publish 8089:8080 kv-akka-sharded:latest
+
+minikube service kv-akka-sharded-service-backend
+
+docker run --name akka-sharded-kv_cassandra_1 -p 9042:9042 -itd kv-db-cassandra
+
+docker exec -it akka-sharded-kv_cassandra_2 bash
+
+docker exec -it 180db5209135 bash
+
 #### Run docker 
 1. using docker-compose : `docker-compose up -d`
 2. using docker run cmd : `docker run --name akka-sharded-kv_cassandra_1 -p 9042:9042 -itd cassandra` ([reference](https://docs.docker.com/engine/reference/commandline/run/))
 
 Create tables: `docker exec -i akka-sharded-kv_cassandra_1 cqlsh -t < create_tables.cql`
+
+
+reference :
+1. https://www.bogotobogo.com/DevOps/DevOps-Kubernetes-1-Running-Kubernetes-Locally-via-Minikube.php
+2. https://www.lightbend.com/blog/how-to-distribute-application-state-with-akka-cluster-part-3-kubernetes-monitoring
+3. https://github.com/michael-read/akka-typed-distributed-state-blog/tree/master/K8s/cassandra
+
+#### Cassandra DB Cmds :
+1. Entering Cassandra bash:
+    ```
+    > docker exec -it tagging_backend_cassandra bash
+    > cqlsh
+    ```
+2. Show all keyspaces: `SELECT * FROM system_schema.keyspaces;`
+3. Show all tables in a keyspace: `SELECT * FROM system_schema.tables where keyspace_name='<keyspace-value>';`
+3. Create keyspace : 
+    ```
+    CREATE KEYSPACE IF NOT EXISTS akka WITH REPLICATION = { 'class' : 'SimpleStrategy','replication_factor':1 };
+    CREATE KEYSPACE IF NOT EXISTS akka_snapshot WITH REPLICATION = { 'class' : 'SimpleStrategy','replication_factor':1 };
+    CREATE KEYSPACE IF NOT EXISTS taggingservice WITH REPLICATION = { 'class' : 'SimpleStrategy','replication_factor':1 };
+    ```
+4. Create tables: `docker exec -i tagging_backend_cassandra cqlsh -t < create_tables.cql`
+5. Cassandra cheatsheet cmds [ref](http://codefoundries.com/developer/cassandra/cassandra-cheatsheet.html)
+6. Get all presistence_id using allow filtering : `select * from all_persistence_ids where persistence_id >= 'T' and persistence_id < 'U' allow filtering;`
+7. Creating a index on non primary key :
+    i.e. following fails :
+    ```
+    CREATE CUSTOM INDEX <index_name> ON <keyspace>.<table> (column_name)
+    USING 'org.apache.cassandra.index.sasi.SASIIndex'
+    WITH OPTIONS = {
+        'mode': 'CONTAINS',
+        'analyzer_class': 'org.apache.cassandra.index.sasi.analyzer.NonTokenizingAnalyzer',
+        'case_sensitive': 'false'
+    };
+    ```
+8. Reset Cassandra instance:
+   ```
+   docker exec -i tagging_backend_cassandra cqlsh -t < truncate_tables.cql
+   ```
+9. Drop keyspaces in Cassandra instance:
+   ```
+   DROP KEYSPACE akka;
+   DROP KEYSPACE akka_snapshot;
+   DROP KEYSPACE taggingservice;
+   DROP KEYSPACE entitymanager;
+   ```

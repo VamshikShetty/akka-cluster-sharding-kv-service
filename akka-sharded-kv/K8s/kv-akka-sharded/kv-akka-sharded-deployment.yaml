@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kv-akka-sharded-deployment
+  labels:
+    environment: dev
+    app.kv.akka: kv-akka-sharded
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app.kv.akka: kv-akka-sharded
+  template:
+    metadata:
+      labels:
+        app.kv.akka: kv-akka-sharded
+    spec:
+      containers:
+      - name: kv-akka-sharded
+        # image: registry.digitalocean.com/vamshik-shetty/kv-akka-sharded:latest
+        image: kv-akka-sharded:latest
+        imagePullPolicy: Never
+        readinessProbe:
+          httpGet:
+            path: /akka-management/health-checks/ready
+            port: management
+          periodSeconds: 10
+          failureThreshold: 3
+          initialDelaySeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /akka-management/health-checks/alive
+            port: management
+          periodSeconds: 10
+          failureThreshold: 5
+          initialDelaySeconds: 20
+        ports:
+          # akka remoting
+          - name: remoting
+            containerPort: 2551
+            protocol: TCP
+          # akka-management and bootstrap
+          - name: management
+            containerPort: 8552
+            protocol: TCP
+          - name: http-server
+            containerPort: 8080
+            protocol: TCP
+        env:
+        - name: CASSANDRA_CONTACT_POINT
+          value: "cassandra-db-service-backend:9042"
+        # The Kubernetes API discovery will use this service name to look for
+        # nodes with this value in the 'app.kv.akka' label.
+        # This can be customized with the 'pod-label-selector' setting.
+        - name: AKKA_CLUSTER_BOOTSTRAP_SERVICE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: "metadata.labels['app.kv.akka']"

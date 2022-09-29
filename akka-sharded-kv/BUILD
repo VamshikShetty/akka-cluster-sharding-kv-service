@@ -48,11 +48,21 @@ java_binary(
       "@maven//:com_typesafe_akka_akka_actor_typed_{}".format(akka_versions_ScalaBinary),
       "@maven//:com_typesafe_akka_akka_serialization_jackson_{}".format(akka_versions_ScalaBinary),
 
+      # Akka management dependencies
+      "@maven//:com_lightbend_akka_management_akka_management_{}".format(akka_versions_ScalaBinary),
+      "@maven//:com_lightbend_akka_management_akka_management_cluster_bootstrap_{}".format(akka_versions_ScalaBinary),
+
+      # Akka discovery kubernetes-api dependencies
+      "@maven//:com_lightbend_akka_discovery_akka_discovery_kubernetes_api_{}".format(akka_versions_ScalaBinary),
+
       # Akka cluster dependencies
       "@maven//:com_typesafe_akka_akka_cluster_sharding_{}".format(akka_versions_ScalaBinary),
       "@maven//:com_typesafe_akka_akka_cluster_sharding_typed_{}".format(akka_versions_ScalaBinary),
       "@maven//:com_typesafe_akka_akka_cluster_typed_{}".format(akka_versions_ScalaBinary),
       "@maven//:com_typesafe_akka_akka_cluster_{}".format(akka_versions_ScalaBinary),
+
+      # Akka discovery dependencies
+      "@maven//:com_typesafe_akka_akka_discovery_{}".format(akka_versions_ScalaBinary),
 
       # Persistence dependencies
       "@maven//:com_typesafe_akka_akka_persistence_typed_{}".format(akka_versions_ScalaBinary),
