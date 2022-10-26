@@ -20,6 +20,9 @@ public class ActorSystemProducer {
 		this.actorSystem = ActorSystem.create(ActorSystemProducer.create(), "kv-inmem-actor-system");
 		log.info("Actor system created.");
 
+		/**
+		 * AkkaManagement & ClusterBootstrap are needed for k8s deployment.
+		 */
 		AkkaManagement.get(this.actorSystem).start();
 		log.info("Akka Management started.");
 
