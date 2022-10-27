@@ -34,9 +34,6 @@ spec:
         volumeMounts:
         - name: cassandra-initdb
           mountPath: /docker-entrypoint-initdb.d
-        volumeMounts:
-        - name: cassandra-initdb
-          mountPath: /docker-entrypoint-initdb.d
         lifecycle:
           postStart:
             exec:

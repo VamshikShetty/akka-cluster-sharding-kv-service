@@ -17,9 +17,9 @@ spec:
     spec:
       containers:
       - name: kv-akka-sharded
-        # image: registry.digitalocean.com/vamshik-shetty/kv-akka-sharded:latest
-        image: kv-akka-sharded:latest
-        imagePullPolicy: Never
+        image: registry.digitalocean.com/akka-kv-service-repo/kv-akka-sharded
+        # image: kv-akka-sharded:latest
+        # imagePullPolicy: Never
         readinessProbe:
           httpGet:
             path: /akka-management/health-checks/ready
